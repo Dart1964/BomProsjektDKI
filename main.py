@@ -1,6 +1,5 @@
-import time
-
-class kjoretoypassering:
+import os
+import time;
     def __init__(self, dato, time, registreringsnummer):
         self.dato = dato
         self.time = time
@@ -44,6 +43,25 @@ eksempel_passeringer = [
     kjoretoypassering(1762300800, 14, "ST77889"),  # 2025-11-05 14:00
 ]
 
+diesel_kjoretoy = [
+    diesel("AB12345", "Volvo", "V70", "Ola Nordmann"),
+    diesel("GH23456", "Ford", "Focus", "Kari Nordmann"),
+    diesel("MN11223", "VW", "Passat", "Per Hansen"),
+]
+
+bensin_kjoretoy = [
+    bensin("CD98765", "Toyota", "Corolla", "Anne Olsen"),
+    bensin("EF45678", "Honda", "Civic", "Lars Johansen"),
+    bensin("OP33445", "Mazda", "3", "Ida Berg"),
+]
+
+elektriske_kjoretoy = [
+    elektriske("IJ34567", "Tesla", "Model 3", "Jon Berg"),
+    elektriske("KL76543", "Nissan", "Leaf", "Eva Hansen"),
+    elektriske("QR55667", "VW", "ID.4", "Mats Larsen"),
+    elektriske("ST77889", "Hyundai", "Kona Electric", "Siri Dahl"),
+]
+
 
 def flest_passeringer_dato():
     pass  
@@ -52,5 +70,5 @@ def flest_passeringer_time():
     pass
         
 def flest_passeringer_kjoretoy():
-    pass
-    
+    for k in eksempel_passeringer:
+        k.dato
