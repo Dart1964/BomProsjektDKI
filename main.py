@@ -1,34 +1,5 @@
 import os
-import time;
-    def __init__(self, dato, time, registreringsnummer):
-        self.dato = dato
-        self.time = time
-        self.registreringsnummer = registreringsnummer
-        
-
-class kjoretoy(kjoretoypassering):
-    def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer)
-        self.merke = merke
-        self.modell = modell
-        self.eier = eier
-
-
-class fossildrevne(kjoretoy):
-    def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer, merke, modell, eier)
-
-class elektriske(kjoretoy):
-    def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer, merke, modell, eier)
-
-class bensin(fossildrevne):
-    def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer, merke, modell, eier)
-
-class diesel(fossildrevne):
-    def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer, merke, modell, eier)
+import time;                                                                                                                                                                                                                                                                              
 
 eksempel_passeringer = [
     kjoretoypassering(1761955200, 8,  "AB12345"),  # 2025-11-01 08:00
