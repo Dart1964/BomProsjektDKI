@@ -1,3 +1,4 @@
+from kjoretoypassering import kjoretoypassering
 class kjoretoy(kjoretoypassering):
     def __init__(self, registreringsnummer, merke, modell, eier):
         super().__init__(self, registreringsnummer)
