@@ -1,7 +1,8 @@
-from kjoretoypassering import kjoretoypassering
-class kjoretoy(kjoretoypassering):
+# Remove incorrect inheritance and super() call; define vehicle fields directly
+class kjoretoy:
     def __init__(self, registreringsnummer, merke, modell, eier):
-        super().__init__(self, registreringsnummer)
+        self.registreringsnummer = registreringsnummer
         self.merke = merke
         self.modell = modell
         self.eier = eier
+

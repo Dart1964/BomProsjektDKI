@@ -3,8 +3,7 @@ from diesel import diesel
 from elektriske import elektriske
 from fossildrevne import fossildrevne
 from bensin import bensin
-import time,r 
-
+import r
 eksempel_passeringer = [
     kjoretoypassering(1761955200, 8,  "AB12345"),  # 2025-11-01 08:00
     kjoretoypassering(1761955200, 12, "CD98765"),  # 2025-11-01 12:00
@@ -15,18 +14,17 @@ eksempel_passeringer = [
     kjoretoypassering(1762214400, 13, "MN11223"),  # 2025-11-04 13:00
     kjoretoypassering(1762214400, 16, "OP33445"),  # 2025-11-04 16:00
     kjoretoypassering(1762300800, 6,  "QR55667"),  # 2025-11-05 06:00
-    kjoretoypassering(1762300800, 14, "ST77889"),  # 2025-11-05 14:00
+    kjoretoypassering(1762300800, 14, "ST77889"),  # 2025-11-05 14:00,
 ]
 
 diesel_kjoretoy = [
     diesel("AB12345", "Volvo", "V70", "Ola Nordmann"),
     diesel("GH23456", "Ford", "Focus", "Kari Nordmann"),
-    diesel("MN11223", "VW", "Passat", "Per Hansen"),
+    diesel("MN11223", "VW", "Passat", "Per Hansen")
 ]
-
 bensin_kjoretoy = [
     bensin("CD98765", "Toyota", "Corolla", "Anne Olsen"),
-    bensin("EF45678", "Honda", "Civic", "Lars Johansen"),
+    bensin("EF45678", "Honda", "Civic", "Lars    Johansen"),
     bensin("OP33445", "Mazda", "3", "Ida Berg"),
 ]
 
@@ -37,6 +35,13 @@ elektriske_kjoretoy = [
     elektriske("ST77889", "Hyundai", "Kona Electric", "Siri Dahl"),
 ]
 
+alle = [
+    elektriske_kjoretoy + bensin_kjoretoy + diesel_kjoretoy
+]
+
+
+
+
 
 def flest_passeringer_dato():
     pass  
@@ -44,9 +49,10 @@ def flest_passeringer_dato():
 def flest_passeringer_time():
     pass
         
-def flest_passeringer_kjoretoy():
+def flest_passeringer_kjoretoy():    
+    countliste = []
     for k in eksempel_passeringer:
-        k.dato
+        pass
 
 if __name__ == "__main__":
     flest_passeringer_kjoretoy()
