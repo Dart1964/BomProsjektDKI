@@ -2,7 +2,7 @@ import os
 import time;                                                                                                                                                                                                                                                                              
 from kjoretoypassering import kjoretoypassering
 from diesel import diesel
-from elektriske import elektris
+from elektriske import elektriske
 from fossildrevne import fossildrevne
 
 eksempel_passeringer = [
