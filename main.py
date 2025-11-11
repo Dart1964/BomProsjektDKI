@@ -47,3 +47,6 @@ def flest_passeringer_time():
 def flest_passeringer_kjoretoy():
     for k in eksempel_passeringer:
         k.dato
+
+if __name__ == "__main__":
+    flest_passeringer_kjoretoy()
