@@ -1,4 +1,5 @@
 from collections import defaultdict, Counter
+from datetime import date
 
 class Kjoretoyregister:
     """
@@ -17,15 +18,15 @@ class Kjoretoyregister:
 
 
 class KjoretoyPassering:
-    """
-    Representerer én registrert passering.
-    Attributter:
-        dato (int): Dato i f.eks. format 20251111.
-        time (int): Timeintervall (f.eks. 8 for 08–09).
-        registreringsnummer (str): Kjøretøyets registreringsnummer.
-    """
+    """Representerer én registrert passering."""
     def __init__(self, dato, time, registreringsnummer):
-        self.dato = dato
+        # Godtar tuple som (år, måned, dag)
+        if isinstance(dato, tuple):
+            self.dato = date(*dato)
+        elif isinstance(dato, date):
+            self.dato = dato
+        else:
+            raise ValueError("Dato må være et datetime.date-objekt eller tuple (år, måned, dag).")
         self.time = time
         self.registreringsnummer = registreringsnummer
 

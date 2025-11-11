@@ -1,6 +1,6 @@
 from kjoretoy import Diesel, Fossildrevne, Bensin95, Elektriske
 from funksjon import KjoretoyPassering, Trafikksystem, Kjoretoyregister
-
+from datetime import date
 
 # --- Eksempel på bruk ---
 if __name__ == "__main__":
@@ -15,14 +15,16 @@ if __name__ == "__main__":
 
     system = Trafikksystem(register)
 
-    system.legg_til_passering(KjoretoyPassering(20251110, 8, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(20251110, 9, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(20251110, 8, "CD67890"))
-    system.legg_til_passering(KjoretoyPassering(20251111, 9, "EF11111"))
-    system.legg_til_passering(KjoretoyPassering(20251111, 9, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(20251111, 9, "AB12345"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 8, "AB12345"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 9, "AB12345"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 8, "CD67890"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "EF11111"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "AB12345"))
+    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "AB12345"))
 
     dato, time = system.flest_passeringer_dato_og_time()
-    print(f"Flest passeringer på dato {dato}, time {time}.")
+    if dato:
+        print(f"Flest passeringer på dato {dato.strftime('%d.%m.%Y')}, time {time}:00–{time+1}:00.")
     kjoretoy, antall = system.flest_passeringer_kjoretoy()
-    print(f"Kjøretøyet med flest passeringer: {kjoretoy} ({antall} ganger).")
+    if kjoretoy:
+        print(f"Kjøretøyet med flest passeringer: {kjoretoy} ({antall} ganger).")
