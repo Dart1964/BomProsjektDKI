@@ -3,7 +3,7 @@ from diesel import diesel
 from elektriske import elektriske
 from fossildrevne import fossildrevne
 from bensin import bensin
-import time, r
+import time
 
 eksempel_passeringer = [
     kjoretoypassering(1761955200, 8,  "AB12345"),  # 2025-11-01 08:00
