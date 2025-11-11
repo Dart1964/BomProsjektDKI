@@ -1,3 +1,12 @@
+"""Definerer dataklasser for kjøretøy.
+
+Inneholder:
+- Kjoretoy: basisreprensentasjon av et kjøretøy.
+- Fossildrevne: mellomklasse for fossildrevne kjøretøy.
+- Diesel, Bensin95: konkrete fossildrevne typer.
+- Elektriske: konkret klasse for elektriske kjøretøy.
+"""
+
 class Kjoretoy:
     """
     Representerer et kjøretøy.
