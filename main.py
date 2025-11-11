@@ -1,3 +1,9 @@
+"""Eksempelskript som viser hvordan registrere kjøretøy og passeringer.
+
+Oppretter et register, legger til noen kjøretøy og simulerer passeringer i Trafikksystemet.
+Skriver ut dato/time med flest passeringer og kjøretøyet med flest passeringer.
+"""
+
 from kjoretoy import Diesel, Fossildrevne, Bensin95, Elektriske
 from funksjon import KjoretoyPassering, Trafikksystem, Kjoretoyregister
 from datetime import date

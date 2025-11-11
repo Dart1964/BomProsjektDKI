@@ -1,3 +1,13 @@
+"""Modul for kjøretøyregister, passeringer og trafikksystem.
+
+Dette modulet inneholder:
+- Kjoretoyregister: lagrer og finner kjøretøy basert på registreringsnummer.
+- KjoretoyPassering: representerer en enkel passering (dato, time, registreringsnummer).
+- Trafikksystem: samler passeringer og tilbyr aggregeringslogikk:
+    * finn dato med flest passeringer og timen med flest passeringer den datoen
+    * finn kjøretøyet med flest passeringer
+"""
+
 from collections import defaultdict, Counter
 from datetime import date
 
