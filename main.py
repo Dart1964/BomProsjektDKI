@@ -23,6 +23,7 @@ if __name__ == "__main__":
     system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "AB12345"))
 
     dato, time = system.flest_passeringer_dato_og_time()
+    
     if dato:
         print(f"Flest passeringer på dato {dato.strftime('%d.%m.%Y')}, time {time}:00–{time+1}:00.")
     kjoretoy, antall = system.flest_passeringer_kjoretoy()
