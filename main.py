@@ -1,30 +1,18 @@
-from kjoretoy import Diesel, Fossildrevne, Bensin95, Elektriske
-from funksjon import KjoretoyPassering, Trafikksystem, Kjoretoyregister
-from datetime import date
+import requests
 
-# --- Eksempel på bruk ---
-if __name__ == "__main__":
-    register = Kjoretoyregister()
+API_KEY = "f95c9411"
 
-    bil1 = Diesel("Volkswagen", "Golf", "Ola Nordmann", "AB12345")
-    bil2 = Bensin95("Toyota", "Corolla", "Kari Olsen", "CD67890")
-    bil3 = Elektriske("Tesla", "Model 3", "Per Hansen", "EF11111")
+movie = input("Enter movie name: ")
 
-    for bil in [bil1, bil2, bil3]:
-        register.legg_til(bil)
+url = f"http://www.omdbapi.com/?t={movie}&apikey={API_KEY}"
 
-    system = Trafikksystem(register)
+response = requests.get(url)
+data = response.json()
 
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 8, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 9, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 10), 8, "CD67890"))
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "EF11111"))
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "AB12345"))
-    system.legg_til_passering(KjoretoyPassering(date(2025, 11, 11), 9, "AB12345"))
+print("Title:", data["Title"])
+print("Year:", data["Year"])
+print("IMDb rating:", data["imdbRating"])
 
-    dato, time = system.flest_passeringer_dato_og_time()
-    if dato:
-        print(f"Flest passeringer på dato {dato.strftime('%d.%m.%Y')}, time {time}:00–{time+1}:00.")
-    kjoretoy, antall = system.flest_passeringer_kjoretoy()
-    if kjoretoy:
-        print(f"Kjøretøyet med flest passeringer: {kjoretoy} ({antall} ganger).")
+print("\nOther ratings:")
+for rating in data["Ratings"]:
+    print(rating["Source"], "-", rating["Value"])
