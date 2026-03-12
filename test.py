@@ -2,6 +2,7 @@ import tkinter as tk          # tkinter er Pythons innebygde bibliotek for å la
 from tkinter import messagebox  # messagebox brukes til å vise feilmeldinger i pop-up vinduer
 import requests
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 API_KEY = "f95c9411"
 
@@ -10,6 +11,14 @@ def clear_output():
     # Fjerner alle widgets som vises i output_frame
     for widget in output_frame.winfo_children():  # hent alle barn-widgets i rammen
         widget.destroy()  # slett widgeten fra skjermen
+
+def show_cast(data):
+    tk.Label(output_frame, text="Director: " + data.get("Director", "N/A"), font=("Arial", 11, "italic"), fg="#444").pack(anchor="w", padx=10)
+    tk.Label(output_frame, text="Writer: " + data.get("Writer", "N/A"), font=("Arial", 11, "italic"), fg="#444").pack(anchor="w", padx=10)
+
+    tk.Label(output_frame, text="Actors:", font=("Arial", 11, "bold")).pack(anchor="w", padx=10, pady=(8, 2))
+    for actor in data.get("Actors", "N/A").split(", "):
+        tk.Label(output_frame, text=f"  • {actor}", font=("Arial", 11)).pack(anchor="w", padx=20)
 
 
 def show_movie():
@@ -36,6 +45,7 @@ def show_movie():
             tk.Label(output_frame, text=text).pack()
     else:
         tk.Label(output_frame, text="No ratings available").pack()
+    show_cast(data)
 
 
 def show_series():
@@ -55,8 +65,9 @@ def show_series():
         messagebox.showerror("Error", "Not a series")
         return
 
-    total_seasons = int(data["totalSeasons"])
+    show_cast(data)
 
+    total_seasons = int(data["totalSeasons"])
     episode_numbers = []  # episodenummer på x-aksen
     ratings = []          # vurderinger på y-aksen
 
@@ -77,38 +88,43 @@ def show_series():
         messagebox.showerror("Error", "No ratings found")
         return
 
+
+    root.geometry("800x900")
     # figsize=(bredde, høyde) i tommer — bestemmer størrelsen på grafvinduet
-    plt.figure(figsize=(10, 9))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8))
 
-    # subplot(rader, kolonner, indeks) — deler figuren i et rutenett
-    plt.subplot(2, 1, 1)  # øverste graf
-    plt.plot(episode_numbers, ratings, marker='o', linestyle='-')
-    plt.xlabel("Episode Number")
-    plt.ylabel("IMDb Rating")
-    plt.title(f"{series} - Line Plot")
-    plt.ylim(0, 10.1)
-    plt.yticks([i * 0.5 for i in range(21)])
-    step = max(1, len(episode_numbers) // 20)  # maks ~20 labels på x-aksen
-    plt.xticks(range(1, len(episode_numbers) + 1, step), rotation=45)
+    step = max(1, len(episode_numbers) // 20)
 
-    plt.subplot(2, 1, 2)  # nederste graf
-    plt.bar(episode_numbers, ratings, color='skyblue')
-    plt.xlabel("Episode Number")
-    plt.ylabel("IMDb Rating")
-    plt.title(f"{series} - Bar Chart")
-    plt.ylim(0, 10.1)
-    plt.yticks([i * 0.5 for i in range(21)])
-    plt.xticks(range(1, len(episode_numbers) + 1, step), rotation=45)
+    ax1.plot(episode_numbers, ratings, marker='o', linestyle='-')
+    ax1.set_xlabel("Episode Number")
+    ax1.set_ylabel("IMDb Rating")
+    ax1.set_title(f"{series} - Line Plot")
+    ax1.set_ylim(0, 10.1)
+    ax1.set_yticks([i * 0.5 for i in range(21)])
+    ax1.set_xticks(range(1, len(episode_numbers) + 1, step))
+    ax1.tick_params(axis='x', rotation=45)
 
-    plt.tight_layout()  # juster mellomrom så grafene ikke overlapper
-    plt.show()          # åpne grafvinduet
+    ax2.bar(episode_numbers, ratings, color='skyblue')
+    ax2.set_xlabel("Episode Number")
+    ax2.set_ylabel("IMDb Rating")
+    ax2.set_title(f"{series} - Bar Chart")
+    ax2.set_ylim(0, 10.1)
+    ax2.set_yticks([i * 0.5 for i in range(21)])
+    ax2.set_xticks(range(1, len(episode_numbers) + 1, step))
+    ax2.tick_params(axis='x', rotation=45)
+
+    fig.tight_layout()
+
+    # Embed the figure into the tkinter window
+    canvas = FigureCanvasTkAgg(fig, master=output_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 
 # ── Oppsett av GUI ────────────────────────────────────────────────────────────
 
 root = tk.Tk()                              # lag hovedvinduet
 root.title("Movie / Series Rating Viewer")  # tekst i tittelbaren
-root.geometry("500x400")                    # størrelse på vinduet i piksler (bredde x høyde)
 
 title = tk.Label(root, text="Enter Movie or Series Name", font=("Arial", 14))
 title.pack(pady=10)  # pady legger til vertikal luft rundt widgeten
