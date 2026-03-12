@@ -74,7 +74,7 @@ def show_series():
         return
 
     # --- Create figure with 2 subplots ---
-    plt.figure(figsize=(10,6))
+    plt.figure(figsize=(10,9))
 
     # Line plot
     plt.subplot(2,1,1)
