@@ -1,37 +1,40 @@
+# tkinter brukes til å lage grafiske programmer
+# (vinduer, knapper, tekstfelt osv.)
 import tkinter as tk
-# tkinter brukes til å lage vinduer, knapper og tekstfelt
 
+# messagebox brukes til å vise popup-feilmeldinger
 from tkinter import messagebox
-# messagebox brukes til å vise feilmeldinger i små popup-vinduer
 
-import requests
 # requests brukes til å hente data fra internett (API)
+import requests
 
-import matplotlib.pyplot as plt
 # matplotlib brukes til å lage grafer
+import matplotlib.pyplot as plt
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # gjør at matplotlib-grafer kan vises inni tkinter-vinduet
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+# lager pene og jevnt fordelte tall på graf-aksene
 from matplotlib.ticker import MaxNLocator
-# lager pene og jevnt fordelte tall på aksene i grafen
 
-
+# API-nøkkel for OMDb (Open Movie Database)
 API_KEY = "f95c9411"
-# nøkkel som gir tilgang til OMDb film-databasen
 
 
+# Denne funksjonen sletter alt som vises i resultatområdet
 def clear_output():
-    # sletter alt som vises i resultatområdet
+
+    # finner alle elementene inni output_frame
     for widget in output_frame.winfo_children():
-        # finner alle elementer inni rammen
+
+        # sletter elementet fra skjermen
         widget.destroy()
-        # fjerner elementet fra skjermen
 
 
+# Denne funksjonen viser regissør, manusforfatter og skuespillere
 def show_cast(data):
-    # viser regissør og manusforfatter
 
+    # viser regissør
     tk.Label(
         output_frame,
         text="Director: " + data.get("Director", "N/A"),
@@ -39,6 +42,7 @@ def show_cast(data):
         fg="#444"
     ).pack(anchor="w", padx=10)
 
+    # viser manusforfatter
     tk.Label(
         output_frame,
         text="Writer: " + data.get("Writer", "N/A"),
@@ -53,10 +57,13 @@ def show_cast(data):
         font=("Arial", 11, "bold")
     ).pack(anchor="w", padx=10, pady=(8, 2))
 
+    # henter listen med skuespillere
     actors_text = data.get("Actors", "N/A")
 
-    # deler opp skuespillerlisten
+    # split deler opp teksten ved hvert komma
     for actor in actors_text.split(", "):
+
+        # viser en skuespiller per linje
         tk.Label(
             output_frame,
             text=f"  • {actor}",
@@ -64,12 +71,16 @@ def show_cast(data):
         ).pack(anchor="w", padx=20)
 
 
+# Denne funksjonen viser en bestemt film ved hjelp av imdb id
 def show_movie_by_id(imdb_id):
-    # viser en bestemt film ved hjelp av imdb id
 
+    # fjerner gamle resultater
     clear_output()
 
+    # lager URL til API-et
     url = f"http://www.omdbapi.com/?i={imdb_id}&apikey={API_KEY}"
+
+    # henter data fra API
     data = requests.get(url).json()
 
     # hvis filmen ikke finnes
@@ -77,7 +88,7 @@ def show_movie_by_id(imdb_id):
         messagebox.showerror("Error", data.get("Error"))
         return
 
-    # viser tittel
+    # viser tittel og år
     tk.Label(
         output_frame,
         text=f"Title: {data['Title']} ({data.get('Year', 'N/A')})",
@@ -91,7 +102,7 @@ def show_movie_by_id(imdb_id):
         font=("Arial", 11)
     ).pack()
 
-    # overskrift for vurderinger
+    # overskrift for ratings
     tk.Label(
         output_frame,
         text="Ratings:",
@@ -100,41 +111,52 @@ def show_movie_by_id(imdb_id):
 
     # viser alle ratings
     if "Ratings" in data and data["Ratings"]:
+
         for rating in data["Ratings"]:
+
             text = f"{rating['Source']} : {rating['Value']}"
+
             tk.Label(output_frame, text=text).pack()
+
     else:
         tk.Label(output_frame, text="No ratings available").pack()
 
+    # viser regissør og skuespillere
     show_cast(data)
 
 
+# Denne funksjonen åpner et nytt vindu der brukeren kan velge riktig film
 def choose_title(results, callback):
-    # åpner et lite vindu der brukeren kan velge riktig film/serie
 
+    # lager nytt vindu
     select_window = tk.Toplevel(root)
+
     select_window.title("Choose Title")
     select_window.geometry("500x350")
 
+    # tekst øverst i vinduet
     tk.Label(
         select_window,
         text="Choose the correct title",
         font=("Arial", 11, "bold")
     ).pack(pady=8)
 
+    # liste som brukeren kan velge fra
     listbox = tk.Listbox(select_window, width=65, height=12)
+
     listbox.pack(padx=10, pady=10)
 
     # legger filmer inn i listen
     for item in results:
+
         title = item.get("Title", "Unknown")
         year = item.get("Year", "")
         item_type = item.get("Type", "")
 
         listbox.insert(tk.END, f"{title} ({year}) - {item_type}")
 
+    # funksjon som kjøres når brukeren trykker Select
     def select_item():
-        # kjøres når brukeren trykker "Select"
 
         selected = listbox.curselection()
 
@@ -146,8 +168,10 @@ def choose_title(results, callback):
 
         select_window.destroy()
 
+        # callback betyr at vi kjører funksjonen som ble sendt inn
         callback(imdb_id)
 
+    # knapp for å velge film
     tk.Button(
         select_window,
         text="Select",
@@ -155,18 +179,22 @@ def choose_title(results, callback):
     ).pack(pady=8)
 
 
+# denne funksjonen søker etter filmer
 def show_movie():
-    # søker etter filmer med dette navnet
 
+    # fjerner gamle resultater
     clear_output()
 
+    # henter teksten brukeren skrev
     movie = entry.get().strip()
 
     if not movie:
         messagebox.showerror("Error", "Write a movie name")
         return
 
+    # søker etter filmer i API
     url = f"http://www.omdbapi.com/?s={movie}&type=movie&apikey={API_KEY}"
+
     data = requests.get(url).json()
 
     if data.get("Response") == "False":
@@ -177,13 +205,17 @@ def show_movie():
 
     # hvis bare én film finnes
     if len(results) == 1:
+
         show_movie_by_id(results[0]["imdbID"])
+
+    # ellers må brukeren velge riktig film
     else:
+
         choose_title(results, show_movie_by_id)
 
 
+# denne funksjonen søker etter serier
 def show_series():
-    # søker etter serier
 
     clear_output()
 
@@ -194,6 +226,7 @@ def show_series():
         return
 
     url = f"http://www.omdbapi.com/?s={series}&type=series&apikey={API_KEY}"
+
     data = requests.get(url).json()
 
     if data.get("Response") == "False":
@@ -203,17 +236,21 @@ def show_series():
     results = data["Search"]
 
     if len(results) == 1:
+
         show_series_by_id(results[0]["imdbID"])
+
     else:
+
         choose_title(results, show_series_by_id)
 
 
+# denne funksjonen lager grafer for alle episoder i en serie
 def show_series_by_id(imdb_id):
-    # lager grafer for alle episoder i en serie
 
     clear_output()
 
     url = f"http://www.omdbapi.com/?i={imdb_id}&apikey={API_KEY}"
+
     data = requests.get(url).json()
 
     if data.get("Response") == "False":
@@ -237,18 +274,21 @@ def show_series_by_id(imdb_id):
     for season in range(1, total_seasons + 1):
 
         season_url = f"http://www.omdbapi.com/?i={imdb_id}&Season={season}&apikey={API_KEY}"
+
         season_data = requests.get(season_url).json()
 
         if "Episodes" not in season_data:
             continue
 
-        # går gjennom episodene
+        # går gjennom alle episodene
         for ep in season_data["Episodes"]:
 
             rating = ep["imdbRating"]
 
             if rating != "N/A":
+
                 episode_numbers.append(episode_counter)
+
                 ratings.append(float(rating))
 
             episode_counter += 1
@@ -259,10 +299,9 @@ def show_series_by_id(imdb_id):
 
     root.geometry("950x1000")
 
-    # lager figur (graf-vindu)
+    # fig er hele grafområdet
+    # ax1 og ax2 er to grafer inni figuren
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 9))
-    # fig = hele graf-området
-    # ax1 og ax2 = grafene inni figuren
 
     # linjegraf
     ax1.plot(
@@ -295,57 +334,61 @@ def show_series_by_id(imdb_id):
     ax2.xaxis.set_major_locator(MaxNLocator(nbins=10, integer=True))
 
     fig.subplots_adjust(hspace=0.35)
-    # lager mer plass mellom grafene
 
     # viser grafen i tkinter
     canvas = FigureCanvasTkAgg(fig, master=output_frame)
+
     canvas.draw()
+
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 
-# -------- GUI --------
-
-root = tk.Tk()
 # lager hovedvinduet
+root = tk.Tk()
 
 root.title("Movie / Series Rating Viewer")
 
+# overskrift
 title = tk.Label(
     root,
     text="Enter Movie or Series Name",
     font=("Arial", 14)
 )
+
 title.pack(pady=10)
 
-entry = tk.Entry(root, width=30)
 # tekstfelt der brukeren skriver navn
+entry = tk.Entry(root, width=30)
 
 entry.pack(pady=5)
 
+# ramme for knappene
 button_frame = tk.Frame(root)
-# ramme som holder knappene
 
 button_frame.pack(pady=10)
 
+# knapp for film
 movie_button = tk.Button(
     button_frame,
     text="Movie Ratings",
     command=show_movie
 )
+
 movie_button.grid(row=0, column=0, padx=10)
 
+# knapp for serie
 series_button = tk.Button(
     button_frame,
     text="Series Graph",
     command=show_series
 )
+
 series_button.grid(row=0, column=1, padx=10)
 
+# område der resultater vises
 output_frame = tk.Frame(root)
-# område der resultater og grafer vises
 
 output_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
+# starter programmet
 root.mainloop()
-# holder programmet i gang
-# programmet stopper når vinduet lukkesss
