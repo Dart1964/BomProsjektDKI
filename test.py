@@ -67,4 +67,4 @@ else:
     print("FEIL: Episoder ble ikke hentet")
 
 
-print("\n------ SYSTEMTESTER FERDIG ------")
+print("\nSYSTEMTESTER FERDIG")

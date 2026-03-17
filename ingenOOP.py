@@ -7,46 +7,35 @@ from matplotlib.ticker import MaxNLocator
 
 
 class OMDbClient:
-    """Henter data fra OMDb API."""
+    """Klasse som håndterer all kommunikasjon med OMDb API"""
 
     def __init__(self, api_key):
-        """Lagrer API-nøkkelen som brukes i alle forespørsler."""
         self.api_key = api_key
 
     def search_movie(self, title):
-        """Søker etter filmer med en gitt tittel."""
         url = f"http://www.omdbapi.com/?s={title}&type=movie&apikey={self.api_key}"
-
-        # requests.get(...) sender en forespørsel til API-et
-        # .json() gjør svaret om til en Python-dictionary
         return requests.get(url).json()
 
     def search_series(self, title):
-        """Søker etter serier med en gitt tittel."""
         url = f"http://www.omdbapi.com/?s={title}&type=series&apikey={self.api_key}"
         return requests.get(url).json()
 
     def get_by_id(self, imdb_id):
-        """Henter detaljer om en film eller serie ved hjelp av IMDb-ID."""
         url = f"http://www.omdbapi.com/?i={imdb_id}&apikey={self.api_key}"
         return requests.get(url).json()
 
     def get_season(self, imdb_id, season):
-        """Henter alle episodene i en bestemt sesong."""
         url = f"http://www.omdbapi.com/?i={imdb_id}&Season={season}&apikey={self.api_key}"
         return requests.get(url).json()
 
 
 class GraphGenerator:
-    """Lager grafer for episodevurderinger."""
+    """Klasse som lager grafer"""
 
     def create_episode_graph(self, title, episode_numbers, ratings):
-        """Lager en linjegraf og et stolpediagram for episode-ratings."""
-        # fig er hele figur-området
-        # ax1 og ax2 er de to grafene inni figuren
+
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 9))
 
-        # Linjegraf
         ax1.plot(
             episode_numbers,
             ratings,
@@ -59,11 +48,8 @@ class GraphGenerator:
         ax1.set_title(f"{title} - Line Plot")
         ax1.set_ylim(0, 10)
         ax1.set_yticks(range(0, 11, 1))
-
-        # Lager ryddige heltall på x-aksen
         ax1.xaxis.set_major_locator(MaxNLocator(nbins=10, integer=True))
 
-        # Stolpediagram
         ax2.bar(episode_numbers, ratings, color="skyblue")
         ax2.set_xlabel("Episode Number")
         ax2.set_ylabel("IMDb Rating")
@@ -72,17 +58,16 @@ class GraphGenerator:
         ax2.set_yticks(range(0, 11, 1))
         ax2.xaxis.set_major_locator(MaxNLocator(nbins=10, integer=True))
 
-        # Lager litt luft mellom grafene
         fig.subplots_adjust(hspace=0.35)
 
         return fig
 
 
 class MovieApp:
-    """Styrer vinduet og logikken i programmet."""
+    """Hovedklassen som styrer GUI og programlogikken"""
 
     def __init__(self, root):
-        """Setter opp hovedvinduet og lager objektene programmet trenger."""
+
         self.root = root
         self.root.title("Movie / Series Rating Viewer")
 
@@ -92,33 +77,26 @@ class MovieApp:
         self.create_gui()
 
     def create_gui(self):
-        """Lager tekstfelt, knapper og område for resultater."""
-        # Label er tekst som vises i vinduet
+
         title = tk.Label(
             self.root,
             text="Enter Movie or Series Name",
             font=("Arial", 14)
         )
         title.pack(pady=10)
-        # pack() plasserer elementet i vinduet
-        # pady gir luft over og under
 
-        # Entry er et tekstfelt brukeren kan skrive i
         self.entry = tk.Entry(self.root, width=30)
         self.entry.pack(pady=5)
 
-        # Frame er en usynlig beholder som brukes til å samle widgets
         button_frame = tk.Frame(self.root)
         button_frame.pack(pady=10)
 
-        # command=self.show_movie betyr at show_movie() kjøres når knappen trykkes
         movie_button = tk.Button(
             button_frame,
             text="Movie Ratings",
             command=self.show_movie
         )
         movie_button.grid(row=0, column=0, padx=10)
-        # grid() plasserer widgets i rader og kolonner
 
         series_button = tk.Button(
             button_frame,
@@ -127,25 +105,21 @@ class MovieApp:
         )
         series_button.grid(row=0, column=1, padx=10)
 
-        # Dette området brukes til å vise tekst og grafer
         self.output_frame = tk.Frame(self.root)
         self.output_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
     def clear_output(self):
-        """Fjerner alt som vises i resultatområdet."""
-        # winfo_children() henter alle widgets inni output_frame
         for widget in self.output_frame.winfo_children():
             widget.destroy()
 
     def show_cast(self, data):
-        """Viser regissør, manusforfatter og skuespillere."""
+
         tk.Label(
             self.output_frame,
             text="Director: " + data.get("Director", "N/A"),
             font=("Arial", 11, "italic"),
             fg="#444"
         ).pack(anchor="w", padx=10)
-        # anchor="w" betyr venstrejustert
 
         tk.Label(
             self.output_frame,
@@ -160,11 +134,7 @@ class MovieApp:
             font=("Arial", 11, "bold")
         ).pack(anchor="w", padx=10, pady=(8, 2))
 
-        # Henter tekst med alle skuespillerne
-        actors_text = data.get("Actors", "N/A")
-
-        # split(", ") deler teksten opp ved hvert komma
-        for actor in actors_text.split(", "):
+        for actor in data.get("Actors", "N/A").split(", "):
             tk.Label(
                 self.output_frame,
                 text=f"  • {actor}",
@@ -172,11 +142,9 @@ class MovieApp:
             ).pack(anchor="w", padx=20)
 
     def show_movie(self):
-        """Søker etter en film og viser resultatet."""
+
         self.clear_output()
 
-        # .get() henter teksten fra tekstfeltet
-        # .strip() fjerner mellomrom før og etter teksten
         movie = self.entry.get().strip()
 
         if not movie:
@@ -192,15 +160,14 @@ class MovieApp:
         results = data["Search"]
 
         if len(results) == 1:
-            # Hvis bare ett resultat finnes, vis det direkte
             self.show_movie_by_id(results[0]["imdbID"])
         else:
-            # Hvis flere resultater finnes, la brukeren velge
             self.choose_title(results, self.show_movie_by_id)
 
     def show_movie_by_id(self, imdb_id):
-        """Viser informasjon om en valgt film."""
+
         self.clear_output()
+
         data = self.api.get_by_id(imdb_id)
 
         if data.get("Response") == "False":
@@ -235,8 +202,9 @@ class MovieApp:
         self.show_cast(data)
 
     def show_series(self):
-        """Søker etter en serie og lar brukeren velge riktig resultat."""
+
         self.clear_output()
+
         series = self.entry.get().strip()
 
         if not series:
@@ -257,8 +225,9 @@ class MovieApp:
             self.choose_title(results, self.show_series_by_id)
 
     def show_series_by_id(self, imdb_id):
-        """Viser serieinformasjon og lager grafer for episodene."""
+
         self.clear_output()
+
         data = self.api.get_by_id(imdb_id)
 
         if data.get("Response") == "False":
@@ -271,29 +240,26 @@ class MovieApp:
 
         self.show_cast(data)
 
-        # totalSeasons kommer fra API-et som tekst, derfor gjøres den om til int
         total_seasons = int(data["totalSeasons"])
 
         episode_numbers = []
         ratings = []
         episode_counter = 1
 
-        # Går gjennom alle sesongene
         for season in range(1, total_seasons + 1):
+
             season_data = self.api.get_season(imdb_id, season)
 
             if "Episodes" not in season_data:
                 continue
 
-            # Går gjennom alle episodene i sesongen
             for ep in season_data["Episodes"]:
+
                 rating = ep["imdbRating"]
 
-                # Hopper over episoder som ikke har rating
                 if rating != "N/A":
                     episode_numbers.append(episode_counter)
                     ratings.append(float(rating))
-                    # float() gjør om teksten til et tall
 
                 episode_counter += 1
 
@@ -301,25 +267,18 @@ class MovieApp:
             messagebox.showerror("Error", "No ratings found")
             return
 
-        # Gjør vinduet større så grafen får plass
-        self.root.geometry("950x1000")
-
         fig = self.graph.create_episode_graph(
             data["Title"],
             episode_numbers,
             ratings
         )
 
-        # Legger matplotlib-figuren inn i tkinter-vinduet
         canvas = FigureCanvasTkAgg(fig, master=self.output_frame)
         canvas.draw()
-
-        # get_tk_widget() gjør figuren om til et tkinter-element
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def choose_title(self, results, callback):
-        """Viser et vindu der brukeren kan velge riktig film eller serie."""
-        # Toplevel lager et nytt vindu oppå hovedvinduet
+
         select_window = tk.Toplevel(self.root)
         select_window.title("Choose Title")
         select_window.geometry("500x350")
@@ -330,11 +289,11 @@ class MovieApp:
             font=("Arial", 11, "bold")
         ).pack(pady=8)
 
-        # Listbox er en liste brukeren kan velge fra
         listbox = tk.Listbox(select_window, width=65, height=12)
         listbox.pack(padx=10, pady=10)
 
         for item in results:
+
             title = item.get("Title", "Unknown")
             year = item.get("Year", "")
             item_type = item.get("Type", "")
@@ -345,8 +304,7 @@ class MovieApp:
             )
 
         def select_item():
-            """Henter valgt rad og sender IMDb-ID videre."""
-            # curselection() gir raden brukeren har valgt
+
             selected = listbox.curselection()
 
             if not selected:
@@ -356,6 +314,7 @@ class MovieApp:
             imdb_id = results[selected[0]]["imdbID"]
 
             select_window.destroy()
+
             callback(imdb_id)
 
         tk.Button(
@@ -366,5 +325,7 @@ class MovieApp:
 
 
 root = tk.Tk()
+
 app = MovieApp(root)
+
 root.mainloop()
