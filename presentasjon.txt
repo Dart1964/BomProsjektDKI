@@ -1,0 +1,3 @@
+HVORDAN vi har brukt KI:
+Hjelp med figures. Vi kommenterte med Docstrings. KI dokumenterte deler av koden. 
+MaxNLocator
